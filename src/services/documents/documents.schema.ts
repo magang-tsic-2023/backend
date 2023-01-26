@@ -36,7 +36,7 @@ export const documentsDataSchema = Type.Pick(documentsSchema, ['name', 'url'], {
 export type DocumentsData = Static<typeof documentsDataSchema>
 export const documentsDataValidator = getDataValidator(documentsDataSchema, dataValidator)
 export const documentsDataResolver = resolve<Documents, HookContext>({
-  status: async () => 0,
+  status: async () => 0
 })
 
 // Schema for updating existing entries
@@ -60,25 +60,33 @@ export const documentsQuerySchema = Type.Intersect(
 export type DocumentsQuery = Static<typeof documentsQuerySchema>
 export const documentsQueryValidator = getValidator(documentsQuerySchema, queryValidator)
 export const documentsQueryResolver = resolve<DocumentsQuery, HookContext>({
-  // If there is a user (e.g. with authentication), they are only allowed to see their own data
+  // Created by = User ID, user hanya bisa melihat dokumen yang diuploadnya sendiri
+  // Role = 0, user biasa
   created_by: async (value, user, context) => {
-    if(context.params.user.role==0){
+    if (context.params.user.role == 0) {
       if (context.params.user) {
         return context.params.user.id
       }
       return value
     }
   },
+
+  // Status: 0 Diupload
+  // Status: 1 Approved 1
+  // Status: 2 Approved 2
+  // Status: 3 Approved 3
+  // Status: 99 Ditolak
+
   status: async (value, user, context) => {
     switch (context.params.user.role) {
       case 1:
-        return 0;
+        return 0
       case 2:
-        return 1;
+        return 1
       case 3:
-        return 2;
+        return 2
       default:
-        break;
+        break
     }
   }
 })

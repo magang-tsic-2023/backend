@@ -1,3 +1,4 @@
+import { profile } from './profile/profile'
 import { approvals } from './approvals/approvals'
 import { documents } from './documents/documents'
 import { user } from './users/users'
@@ -5,6 +6,7 @@ import { user } from './users/users'
 import type { Application } from '../declarations'
 
 export const services = (app: Application) => {
+  app.configure(profile)
   app.configure(approvals)
   app.configure(documents)
   app.configure(user)

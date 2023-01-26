@@ -13,14 +13,17 @@ export const approvalsSchema = Type.Object(
     document_id: Type.String(),
     approver_id: Type.String(),
     status: Type.Integer(),
-    note: Type.String(),
+    note: Type.String()
   },
   { $id: 'Approvals', additionalProperties: false }
 )
 export type Approvals = Static<typeof approvalsSchema>
 export const approvalsResolver = resolve<Approvals, HookContext>({})
 
-export const approvalsExternalResolver = resolve<Approvals, HookContext>({})
+export const approvalsExternalResolver = resolve<Approvals, HookContext>({
+  approver_id: async () => undefined,
+  document_id: async () => undefined
+})
 
 // Schema for creating new entries
 export const approvalsDataSchema = Type.Pick(approvalsSchema, ['document_id', 'status'], {
@@ -39,15 +42,25 @@ export const approvalsPatchValidator = getDataValidator(approvalsPatchSchema, da
 export const approvalsPatchResolver = resolve<Approvals, HookContext>({})
 
 // Schema for allowed query properties
-export const approvalsQueryProperties = Type.Pick(approvalsSchema, ['document_id', 'approver_id'])
+export const approvalsQueryProperties = Type.Pick(approvalsSchema, ['document_id', 'approver_id', 'status'])
 export const approvalsQuerySchema = Type.Intersect(
-  [
-    querySyntax(approvalsQueryProperties),
-    // Add additional query properties here
-    Type.Object({}, { additionalProperties: false })
-  ],
+  [querySyntax(approvalsQueryProperties), Type.Object({}, { additionalProperties: false })],
   { additionalProperties: false }
 )
 export type ApprovalsQuery = Static<typeof approvalsQuerySchema>
 export const approvalsQueryValidator = getValidator(approvalsQuerySchema, queryValidator)
-export const approvalsQueryResolver = resolve<ApprovalsQuery, HookContext>({})
+export const approvalsQueryResolver = resolve<ApprovalsQuery, HookContext>({
+  approver_id: async () => undefined,
+  status: async (value, user, context) => {
+    switch (context.params.user.role) {
+      case 1:
+        return 0
+      case 2:
+        return 1
+      case 3:
+        return 2
+      default:
+        break
+    }
+  }
+})

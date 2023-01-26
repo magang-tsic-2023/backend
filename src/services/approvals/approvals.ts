@@ -18,6 +18,7 @@ import type { Application } from '../../declarations'
 import { ApprovalsService, getOptions } from './approvals.class'
 import { createNow, updateNow } from '../../hooks/time-stamp'
 import { approvedBy } from '../../hooks/user-stamp'
+import { getUserIdentity } from '../../hooks/user'
 
 export * from './approvals.class'
 export * from './approvals.schema'
@@ -43,7 +44,8 @@ export const approvals = (app: Application) => {
     before: {
       all: [
         schemaHooks.validateQuery(approvalsQueryValidator),
-        schemaHooks.resolveQuery(approvalsQueryResolver)
+        schemaHooks.resolveQuery(approvalsQueryResolver),
+        getUserIdentity
       ],
       find: [],
       get: [],

@@ -3,6 +3,14 @@ import { feathers } from '@feathersjs/feathers'
 import type { TransportConnection, Params } from '@feathersjs/feathers'
 import authenticationClient from '@feathersjs/authentication-client'
 import type { AuthenticationClientOptions } from '@feathersjs/authentication-client'
+import type { Profile, ProfileData, ProfileQuery, ProfileService } from './services/profile/profile'
+export type { Profile, ProfileData, ProfileQuery }
+export const profileServiceMethods = ['find', 'get', 'create', 'patch', 'remove'] as const
+export type ProfileClientService = Pick<
+  ProfileService<Params<ProfileQuery>>,
+  (typeof profileServiceMethods)[number]
+>
+
 import type {
   Approvals,
   ApprovalsData,
@@ -35,6 +43,7 @@ export const userServiceMethods = ['find', 'get', 'create', 'patch', 'remove'] a
 export type UserClientService = Pick<UserService<Params<UserQuery>>, (typeof userServiceMethods)[number]>
 
 export interface ServiceTypes {
+  profile: ProfileClientService
   approvals: ApprovalsClientService
   documents: DocumentsClientService
   users: UserClientService
@@ -66,6 +75,9 @@ export const createClient = <Configuration = any>(
   })
   client.use('approvals', connection.service('approvals'), {
     methods: approvalsServiceMethods
+  })
+  client.use('profile', connection.service('profile'), {
+    methods: profileServiceMethods
   })
   return client
 }

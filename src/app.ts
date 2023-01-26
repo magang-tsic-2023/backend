@@ -20,6 +20,7 @@ import { postgresql } from './postgresql'
 import { authentication } from './authentication'
 import { services } from './services/index'
 import { channels } from './channels'
+import feathersSwagger, { swaggerUI } from 'feathers-swagger'
 
 const app: Application = express(feathers())
 
@@ -34,9 +35,22 @@ app.use('/', serveStatic(app.get('public')))
 // Configure services and real-time functionality
 app.configure(rest())
 app.configure(
+  feathersSwagger({
+    ui: feathersSwagger.swaggerUI({ docsPath: '/docs' }),
+    specs: {
+      info: {
+        title: 'TSIC Approval Prototype',
+        description: 'TSIC Approval Prototype',
+        version: '1.0.0'
+      },
+      schemes: ['http'] // Optionally set the protocol schema used (sometimes required when host on https)
+    }
+  })
+)
+app.configure(
   socketio({
     cors: {
-      origin: app.get('origins')
+      origin: '*'
     }
   })
 )

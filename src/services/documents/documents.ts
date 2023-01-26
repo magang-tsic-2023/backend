@@ -54,7 +54,7 @@ export const documents = (app: Application) => {
         createdBy,
         updatedBy,
         createNow,
-        updateNow 
+        updateNow
       ],
       patch: [
         schemaHooks.validateData(documentsPatchValidator),
