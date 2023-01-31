@@ -12,11 +12,13 @@ export const approvalsSchema = Type.Object(
     id: Type.String(),
     document_id: Type.String(),
     approver_id: Type.String(),
+    level: Type.String(),
     status: Type.Integer(),
     note: Type.String()
   },
   { $id: 'Approvals', additionalProperties: false }
 )
+
 export type Approvals = Static<typeof approvalsSchema>
 export const approvalsResolver = resolve<Approvals, HookContext>({})
 

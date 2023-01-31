@@ -1,6 +1,5 @@
 // For more information about this file see https://dove.feathersjs.com/guides/cli/hook.html
+import { app } from '../app'
 import type { HookContext } from '../declarations'
 
-export const docChannel = async (context: HookContext) => {
-  console.log(`Running hook doc-channel on ${context.path}.${context.method}`)
-}
+export const docChannel = async (context: HookContext) => {}

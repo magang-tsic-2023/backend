@@ -7,6 +7,8 @@ export async function up(knex: Knex): Promise<void> {
     table.dateTime('date').notNullable()
     table.string('name').notNullable()
     table.string('url').notNullable()
+    table.integer('type').notNullable()
+    table.foreign('type').references('id').inTable('docs_types')
     table.string('status').defaultTo('0')
     table.uuid('created_by').unsigned()
     table.uuid('updated_by').unsigned()

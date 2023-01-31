@@ -2,7 +2,7 @@
 import type { Knex } from 'knex'
 
 export async function up(knex: Knex): Promise<void> {
-  await knex.schema.createTable('user_profile', (table) => {
+  await knex.schema.createTable('users_profile', (table) => {
     table.uuid('id').unsigned().unique().primary()
     table.foreign('id').references('id').inTable('users')
     table.string('department')

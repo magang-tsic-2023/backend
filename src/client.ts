@@ -3,6 +3,32 @@ import { feathers } from '@feathersjs/feathers'
 import type { TransportConnection, Params } from '@feathersjs/feathers'
 import authenticationClient from '@feathersjs/authentication-client'
 import type { AuthenticationClientOptions } from '@feathersjs/authentication-client'
+import type { Roles, RolesData, RolesQuery, RolesService } from './services/roles/roles'
+export type { Roles, RolesData, RolesQuery }
+export const rolesServiceMethods = ['find', 'get', 'create', 'patch', 'remove'] as const
+export type RolesClientService = Pick<RolesService<Params<RolesQuery>>, (typeof rolesServiceMethods)[number]>
+
+import type {
+  Permissions,
+  PermissionsData,
+  PermissionsQuery,
+  PermissionsService
+} from './services/permissions/permissions'
+export type { Permissions, PermissionsData, PermissionsQuery }
+export const permissionsServiceMethods = ['find', 'get', 'create', 'patch', 'remove'] as const
+export type PermissionsClientService = Pick<
+  PermissionsService<Params<PermissionsQuery>>,
+  (typeof permissionsServiceMethods)[number]
+>
+
+import type { Groups, GroupsData, GroupsQuery, GroupsService } from './services/groups/groups'
+export type { Groups, GroupsData, GroupsQuery }
+export const groupsServiceMethods = ['find', 'get', 'create', 'patch', 'remove'] as const
+export type GroupsClientService = Pick<
+  GroupsService<Params<GroupsQuery>>,
+  (typeof groupsServiceMethods)[number]
+>
+
 import type { Profile, ProfileData, ProfileQuery, ProfileService } from './services/profile/profile'
 export type { Profile, ProfileData, ProfileQuery }
 export const profileServiceMethods = ['find', 'get', 'create', 'patch', 'remove'] as const
@@ -43,6 +69,9 @@ export const userServiceMethods = ['find', 'get', 'create', 'patch', 'remove'] a
 export type UserClientService = Pick<UserService<Params<UserQuery>>, (typeof userServiceMethods)[number]>
 
 export interface ServiceTypes {
+  roles: RolesClientService
+  permissions: PermissionsClientService
+  groups: GroupsClientService
   profile: ProfileClientService
   approvals: ApprovalsClientService
   documents: DocumentsClientService
@@ -78,6 +107,15 @@ export const createClient = <Configuration = any>(
   })
   client.use('profile', connection.service('profile'), {
     methods: profileServiceMethods
+  })
+  client.use('groups', connection.service('groups'), {
+    methods: groupsServiceMethods
+  })
+  client.use('permissions', connection.service('permissions'), {
+    methods: permissionsServiceMethods
+  })
+  client.use('roles', connection.service('roles'), {
+    methods: rolesServiceMethods
   })
   return client
 }

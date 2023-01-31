@@ -1,3 +1,6 @@
+import { roles } from './roles/roles'
+import { permissions } from './permissions/permissions'
+import { groups } from './groups/groups'
 import { profile } from './profile/profile'
 import { approvals } from './approvals/approvals'
 import { documents } from './documents/documents'
@@ -6,6 +9,9 @@ import { user } from './users/users'
 import type { Application } from '../declarations'
 
 export const services = (app: Application) => {
+  app.configure(roles)
+  app.configure(permissions)
+  app.configure(groups)
   app.configure(profile)
   app.configure(approvals)
   app.configure(documents)

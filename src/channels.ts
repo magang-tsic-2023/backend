@@ -26,9 +26,11 @@ export const channels = (app: Application) => {
     if (connection) {
       // The connection is no longer anonymous, remove it
       app.channel('anonymous').leave(connection)
+      console.log('An user leave anonymous channel')
 
       // Add it to the authenticated user channel
       app.channel('authenticated').join(connection)
+      console.log('An user authenticated and join authenticated channel')
     }
   })
 
