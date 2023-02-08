@@ -4,6 +4,7 @@ import type { AuthenticationResult } from '@feathersjs/authentication'
 import '@feathersjs/transport-commons'
 import type { Application, HookContext } from './declarations'
 import { logger } from './logger'
+import { dataValidator } from './validators'
 
 export const channels = (app: Application) => {
   if (typeof app.channel !== 'function') {
@@ -20,7 +21,19 @@ export const channels = (app: Application) => {
     app.channel('anonymous').join(connection)
   })
 
-  app.on('login', (authResult: AuthenticationResult, { connection }: Params) => {
+  app.on('login', (authResult: AuthenticationResult, { connection }: Params, context: Params) => {
+    app
+      .get('postgresqlClient')
+      .select('users_roles.role_id')
+      .from('users_roles')
+      .where('users_roles.user_id', '=', authResult.user.id)
+      .then(function (results) {
+        context.roles = results
+        // for (const index in results) {
+        //   authResult.user['roles'].push(results[index].role_id)
+        // }
+      }).catch((err)=>console.log(err))
+
     // connection can be undefined if there is no
     // real-time connection, e.g. when logging in via REST
     if (connection) {
@@ -30,8 +43,10 @@ export const channels = (app: Application) => {
 
       // Add it to the authenticated user channel
       app.channel('authenticated').join(connection)
+      app.channel('authenticated')
       console.log('An user authenticated and join authenticated channel')
     }
+    
   })
 
   // eslint-disable-next-line no-unused-vars

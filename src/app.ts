@@ -43,6 +43,15 @@ app.configure(
         description: 'TSIC Approval Prototype',
         version: '1.0.0'
       },
+      components: {
+        securitySchemes: {
+          BearerAuth: {
+            type: 'http',
+            scheme: 'bearer',
+          },
+        },
+      },
+      security: [{ BearerAuth: [] }],
       schemes: ['http'] // Optionally set the protocol schema used (sometimes required when host on https)
     }
   })

@@ -4,6 +4,9 @@ import { Application as FeathersApplication } from '@feathersjs/express'
 import { ApplicationConfiguration } from './configuration'
 
 import { User } from './services/users/users'
+import { Roles } from './services/roles/roles'
+import { Permissions } from './services/permissions/permissions'
+import { ServiceSwaggerOptions } from 'feathers-swagger'
 
 export { NextFunction }
 
@@ -23,7 +26,12 @@ export type HookContext<S = any> = FeathersHookContext<Application, S>
 
 // Add the user as an optional property to all params
 declare module '@feathersjs/feathers' {
+  interface ServiceOptions {
+    docs?: ServiceSwaggerOptions;
+  }
   interface Params {
     user?: User
+    roles?: Roles[]
+    permission?: Permissions
   }
 }

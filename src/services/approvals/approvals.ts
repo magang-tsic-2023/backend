@@ -16,9 +16,9 @@ import {
 
 import type { Application } from '../../declarations'
 import { ApprovalsService, getOptions } from './approvals.class'
-import { createNow, updateNow } from '../../hooks/time-stamp'
-import { approvedBy } from '../../hooks/user-stamp'
-import { getUserIdentity } from '../../hooks/user'
+import { getApprovalsbyLevel } from './approvals.hooks'
+import { approvalsDataSchema, approvalsQuerySchema, approvalsSchema } from './approvals.schema'
+import { createSwaggerServiceOptions } from 'feathers-swagger'
 
 export * from './approvals.class'
 export * from './approvals.schema'
@@ -28,9 +28,15 @@ export const approvals = (app: Application) => {
   // Register our service on the Feathers application
   app.use('approvals', new ApprovalsService(getOptions(app)), {
     // A list of all methods this service exposes externally
-    methods: ['find', 'get', 'patch', 'remove'],
+    methods: ['find', 'get', 'patch'],
     // You can add additional custom events to be sent to clients here
-    events: []
+    events: [],
+    docs: createSwaggerServiceOptions({
+      schemas: { approvalsDataSchema, approvalsQuerySchema, approvalsSchema },
+      docs: { description: 'My custom service description',
+      securities: ['find', 'get', 'update', 'patch', 'remove'],
+    }
+    })
   })
   // Initialize hooks
   app.service('approvals').hooks({
@@ -45,21 +51,19 @@ export const approvals = (app: Application) => {
       all: [
         schemaHooks.validateQuery(approvalsQueryValidator),
         schemaHooks.resolveQuery(approvalsQueryResolver),
-        getUserIdentity
+        //getUserIdentity
       ],
       find: [],
-      get: [],
+      get: [
+        getApprovalsbyLevel
+      ],
       create: [
         schemaHooks.validateData(approvalsDataValidator),
-        schemaHooks.resolveData(approvalsDataResolver),
-        approvedBy,
-        createNow,
-        updateNow
+        schemaHooks.resolveData(approvalsDataResolver)
       ],
       patch: [
         schemaHooks.validateData(approvalsPatchValidator),
         schemaHooks.resolveData(approvalsPatchResolver),
-        updateNow
       ],
       remove: []
     },

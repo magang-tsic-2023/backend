@@ -10,6 +10,7 @@ export async function up(knex: Knex): Promise<void> {
     table.foreign('approver_id').references('id').inTable('users')
     table.integer('status').defaultTo('0')
     table.integer('level').notNullable()
+    table.foreign('level').references('id').inTable('docs_permissions')
     table.string('note').defaultTo('-')
     table.dateTime('created_at').notNullable()
     table.dateTime('updated_at').notNullable()

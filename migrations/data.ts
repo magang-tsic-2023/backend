@@ -52,16 +52,16 @@ export async function up(knex: Knex): Promise<void> {
   await knex('users').insert({ id: user.uuid, email: user.email, password:user.password, full_name:user.full_name, created_at: dateNow, updated_at: dateNow })
 
   permissionDataDocs.forEach(async (item, index) => {
-    await knex('docs_permissions').insert({ id: index, permission_name: item })
+    await knex('docs_permissions').insert({ id: index, name: item })
   })
   rolesList.forEach(async (item, index) => {
-    await knex('roles').insert({ id: index, role_name: item })
+    await knex('roles').insert({ id: index, name: item })
   })
   docsTypeList.forEach(async (item, index) => {
-    await knex('docs_types').insert({ id: index + 1, docs_type_name: item })
+    await knex('docs_types').insert({ id: index + 1, name: item })
   })
   permissionDataRoles.forEach(async (item, index) => {
-    await knex('permissions').insert({ id: index + 1, permission_name: item })
+    await knex('permissions').insert({ id: index + 1, name: item })
   })
 
   // Add role Super Admin
@@ -84,5 +84,7 @@ export async function up(knex: Knex): Promise<void> {
   }
   await knex('users_roles').insert({ user_id: admin.uuid, role_id: 0})
   await knex('users_roles').insert({ user_id: user.uuid, role_id: 1})
+  //await knex('documents').insert({ id: "843438ee-69cb-493f-8812-71f0c7462f2f", no:2, date: dateNow, name:"Buku Java", type:2, url :"http://localhost", status:1, created_by: user.uuid, updated_by: user.uuid, created_at: dateNow, updated_at: dateNow })
+
 }
 export async function down(knex: Knex): Promise<void> {}

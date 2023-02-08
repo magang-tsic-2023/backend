@@ -5,7 +5,7 @@ import { docsTypeList } from './data'
 export async function up(knex: Knex): Promise<void> {
   await knex.schema.createTable('docs_types', (table) => {
     table.increments('id')
-    table.string('docs_type_name')
+    table.string('name')
   })
 }
 

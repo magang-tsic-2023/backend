@@ -5,7 +5,7 @@ import { permissionDataDocs } from './data'
 export async function up(knex: Knex): Promise<void> {
   await knex.schema.createTable('docs_permissions', (table) => {
     table.increments('id')
-    table.string('permission_name')
+    table.string('name')
   })
 }
 

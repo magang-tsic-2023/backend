@@ -16,7 +16,6 @@ import {
 
 import type { Application } from '../../declarations'
 import { ProfileService, getOptions } from './profile.class'
-import { createNow, updateNow } from '../../hooks/time-stamp'
 
 export * from './profile.class'
 export * from './profile.schema'
@@ -46,8 +45,6 @@ export const profile = (app: Application) => {
       create: [
         schemaHooks.validateData(profileDataValidator),
         schemaHooks.resolveData(profileDataResolver),
-        createNow,
-        updateNow
       ],
       patch: [schemaHooks.validateData(profilePatchValidator), schemaHooks.resolveData(profilePatchResolver)],
       remove: []

@@ -16,7 +16,8 @@ import {
 
 import type { Application } from '../../declarations'
 import { UserService, getOptions } from './users.class'
-import { createNow, updateNow } from '../../hooks/time-stamp'
+import { userDataSchema, userQuerySchema, userSchema } from './users.schema'
+import { createSwaggerServiceOptions } from 'feathers-swagger'
 
 export * from './users.class'
 export * from './users.schema'
@@ -28,7 +29,13 @@ export const user = (app: Application) => {
     // A list of all methods this service exposes externally
     methods: ['find', 'get', 'create', 'patch', 'remove'],
     // You can add additional custom events to be sent to clients here
-    events: []
+    events: [],
+    docs: createSwaggerServiceOptions({
+      schemas: { userDataSchema, userQuerySchema, userSchema },
+      docs: { description: 'My custom service description',
+      securities: ['find', 'get', 'create', 'patch', 'remove'],
+    }
+    })
   })
   // Initialize hooks
   app.service('users').hooks({
@@ -48,13 +55,10 @@ export const user = (app: Application) => {
       create: [
         schemaHooks.validateData(userDataValidator),
         schemaHooks.resolveData(userDataResolver),
-        createNow,
-        updateNow
       ],
       patch: [
         schemaHooks.validateData(userPatchValidator),
         schemaHooks.resolveData(userPatchResolver),
-        updateNow
       ],
       remove: []
     },

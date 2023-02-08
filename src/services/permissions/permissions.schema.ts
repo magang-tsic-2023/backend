@@ -10,7 +10,7 @@ import { dataValidator, queryValidator } from '../../validators'
 export const permissionsSchema = Type.Object(
   {
     id: Type.Number(),
-    permission_name: Type.String()
+    name: Type.String()
   },
   { $id: 'Permissions', additionalProperties: false }
 )
@@ -20,7 +20,7 @@ export const permissionsResolver = resolve<Permissions, HookContext>({})
 export const permissionsExternalResolver = resolve<Permissions, HookContext>({})
 
 // Schema for creating new entries
-export const permissionsDataSchema = Type.Pick(permissionsSchema, ['permission_name'], {
+export const permissionsDataSchema = Type.Pick(permissionsSchema, ['name'], {
   $id: 'PermissionsData'
 })
 export type PermissionsData = Static<typeof permissionsDataSchema>
@@ -36,7 +36,7 @@ export const permissionsPatchValidator = getDataValidator(permissionsPatchSchema
 export const permissionsPatchResolver = resolve<Permissions, HookContext>({})
 
 // Schema for allowed query properties
-export const permissionsQueryProperties = Type.Pick(permissionsSchema, ['id', 'permission_name'])
+export const permissionsQueryProperties = Type.Pick(permissionsSchema, ['id', 'name'])
 export const permissionsQuerySchema = Type.Intersect(
   [
     querySyntax(permissionsQueryProperties),

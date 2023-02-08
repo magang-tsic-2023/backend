@@ -1,3 +1,5 @@
+import { applications } from './applications/applications'
+import { docsTypes } from './docs-types/docs-types'
 import { roles } from './roles/roles'
 import { permissions } from './permissions/permissions'
 import { groups } from './groups/groups'
@@ -9,6 +11,8 @@ import { user } from './users/users'
 import type { Application } from '../declarations'
 
 export const services = (app: Application) => {
+  app.configure(applications)
+  app.configure(docsTypes)
   app.configure(roles)
   app.configure(permissions)
   app.configure(groups)

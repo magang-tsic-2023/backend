@@ -3,6 +3,32 @@ import { feathers } from '@feathersjs/feathers'
 import type { TransportConnection, Params } from '@feathersjs/feathers'
 import authenticationClient from '@feathersjs/authentication-client'
 import type { AuthenticationClientOptions } from '@feathersjs/authentication-client'
+import type {
+  Applications,
+  ApplicationsData,
+  ApplicationsQuery,
+  ApplicationsService
+} from './services/applications/applications'
+export type { Applications, ApplicationsData, ApplicationsQuery }
+export const applicationsServiceMethods = ['find', 'get', 'create', 'patch', 'remove'] as const
+export type ApplicationsClientService = Pick<
+  ApplicationsService<Params<ApplicationsQuery>>,
+  (typeof applicationsServiceMethods)[number]
+>
+
+import type {
+  DocsTypes,
+  DocsTypesData,
+  DocsTypesQuery,
+  DocsTypesService
+} from './services/docs-types/docs-types'
+export type { DocsTypes, DocsTypesData, DocsTypesQuery }
+export const docsTypesServiceMethods = ['find', 'get', 'create', 'patch', 'remove'] as const
+export type DocsTypesClientService = Pick<
+  DocsTypesService<Params<DocsTypesQuery>>,
+  (typeof docsTypesServiceMethods)[number]
+>
+
 import type { Roles, RolesData, RolesQuery, RolesService } from './services/roles/roles'
 export type { Roles, RolesData, RolesQuery }
 export const rolesServiceMethods = ['find', 'get', 'create', 'patch', 'remove'] as const
@@ -69,6 +95,8 @@ export const userServiceMethods = ['find', 'get', 'create', 'patch', 'remove'] a
 export type UserClientService = Pick<UserService<Params<UserQuery>>, (typeof userServiceMethods)[number]>
 
 export interface ServiceTypes {
+  applications: ApplicationsClientService
+  'docs-types': DocsTypesClientService
   roles: RolesClientService
   permissions: PermissionsClientService
   groups: GroupsClientService
@@ -116,6 +144,12 @@ export const createClient = <Configuration = any>(
   })
   client.use('roles', connection.service('roles'), {
     methods: rolesServiceMethods
+  })
+  client.use('docs-types', connection.service('docs-types'), {
+    methods: docsTypesServiceMethods
+  })
+  client.use('applications', connection.service('applications'), {
+    methods: applicationsServiceMethods
   })
   return client
 }

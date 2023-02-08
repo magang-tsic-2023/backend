@@ -5,7 +5,7 @@ import { permissionDataRoles } from './data'
 export async function up(knex: Knex): Promise<void> {
   await knex.schema.createTable('permissions', (table) => {
     table.increments('id')
-    table.string('permission_name')
+    table.string('name')
   })
 }
 
