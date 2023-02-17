@@ -22,17 +22,18 @@ export const channels = (app: Application) => {
   })
 
   app.on('login', (authResult: AuthenticationResult, { connection }: Params, context: Params) => {
-    app
-      .get('postgresqlClient')
-      .select('users_roles.role_id')
-      .from('users_roles')
-      .where('users_roles.user_id', '=', authResult.user.id)
-      .then(function (results) {
-        context.roles = results
-        // for (const index in results) {
-        //   authResult.user['roles'].push(results[index].role_id)
-        // }
-      }).catch((err)=>console.log(err))
+    // app
+    //   .get('postgresqlClient')
+    //   .select('users_roles.role_id')
+    //   .from('users_roles')
+    //   .where('users_roles.user_id', '=', authResult.user.id)
+    //   .then(function (results) {
+    //     context.roles = results
+    //     // for (const index in results) {
+    //     //   authResult.user['roles'].push(results[index].role_id)
+    //     // }
+    //   })
+    //   .catch((err) => console.log(err))
 
     // connection can be undefined if there is no
     // real-time connection, e.g. when logging in via REST
@@ -43,10 +44,17 @@ export const channels = (app: Application) => {
 
       // Add it to the authenticated user channel
       app.channel('authenticated').join(connection)
-      app.channel('authenticated')
+      app
+        .service('documents')
+        .find({ query: { created_by: authResult.user.id } })
+        .then((results) => {
+          for (let index = 0; index < results.data.length; index++) {
+            app.channel(`documents/${results.data[index].id}`).join(connection)
+          }
+        })
+      console.log(app.channels)
       console.log('An user authenticated and join authenticated channel')
     }
-    
   })
 
   // eslint-disable-next-line no-unused-vars
@@ -56,5 +64,12 @@ export const channels = (app: Application) => {
 
     // e.g. to publish all service events to all authenticated users use
     return app.channel('authenticated')
+  })
+
+  app.service('documents').publish('patched', (data: any) => {
+    console.log('patched')
+    return app.channel(`documents/${data.id}`).send({
+      name: data.name
+    })
   })
 }

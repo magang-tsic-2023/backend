@@ -3,8 +3,9 @@ import type { Knex } from 'knex'
 
 export async function up(knex: Knex): Promise<void> {
   await knex.schema.createTable('users', (table) => {
-    table.uuid('id').primary().defaultTo(knex.raw('gen_random_uuid()'))
-    table.string('full_name').notNullable()
+    table.uuid('id').unique().primary().notNullable()
+    table.integer('role')
+    table.foreign('role').references('id').inTable('roles')
     table.string('text')
   })
 }

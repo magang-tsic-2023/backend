@@ -12,7 +12,8 @@ export const profileSchema = Type.Object(
     id: Type.String(),
     full_name: Type.String(),
     department: Type.String(),
-    position: Type.String()
+    position: Type.String(),
+    updated_at: Type.String()
   },
   { $id: 'Profile', additionalProperties: false }
 )
@@ -22,17 +23,25 @@ export const profileResolver = resolve<Profile, HookContext>({})
 export const profileExternalResolver = resolve<Profile, HookContext>({})
 
 // Schema for creating new entries
-export const profileDataSchema = Type.Pick(profileSchema, ['full_name'], {
-  $id: 'ProfileData'
+export const profileDataSchema = Type.Pick(profileSchema, ['id'], {
+  $id: 'ProfileData',
+  additionalProperties: false
 })
 export type ProfileData = Static<typeof profileDataSchema>
 export const profileDataValidator = getDataValidator(profileDataSchema, dataValidator)
+const dateNow = new Date().toISOString()
 export const profileDataResolver = resolve<Profile, HookContext>({
-  id: async (value, user, context) => context.params.user.id
+  full_name: async () => 'User',
+  department: async () => '-',
+  position: async () => '-',
+  updated_at: async () => dateNow
 })
 
 // Schema for updating existing entries
-export const profilePatchSchema = Type.Partial(profileDataSchema, {
+export const profileDataPatchSchema = Type.Pick(profileSchema, ['full_name', 'department', 'position'], {
+  $id: 'ProfileData'
+})
+export const profilePatchSchema = Type.Partial(profileDataPatchSchema, {
   $id: 'ProfilePatch'
 })
 export type ProfilePatch = Static<typeof profilePatchSchema>
@@ -51,4 +60,14 @@ export const profileQuerySchema = Type.Intersect(
 )
 export type ProfileQuery = Static<typeof profileQuerySchema>
 export const profileQueryValidator = getValidator(profileQuerySchema, queryValidator)
-export const profileQueryResolver = resolve<ProfileQuery, HookContext>({})
+export const profileQueryResolver = resolve<ProfileQuery, HookContext>({
+  id: async (value, _user, context) => {
+    if (context.params.user) {
+      if (context.params.user.role == 0) {
+        return value
+      }
+      return context.params.user.id
+    }
+    return value
+  }
+})

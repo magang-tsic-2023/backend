@@ -5,9 +5,9 @@ export async function up(knex: Knex): Promise<void> {
   await knex.schema.createTable('users_profile', (table) => {
     table.uuid('id').unsigned().unique().primary()
     table.foreign('id').references('id').inTable('users')
+    table.string('full_name')
     table.string('department')
     table.string('position')
-    table.dateTime('created_at').notNullable()
     table.dateTime('updated_at').notNullable()
   })
 }

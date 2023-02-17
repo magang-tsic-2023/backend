@@ -20,7 +20,7 @@ import { postgresql } from './postgresql'
 import { authentication } from './authentication'
 import { services } from './services/index'
 import { channels } from './channels'
-import feathersSwagger, { swaggerUI } from 'feathers-swagger'
+import feathersSwagger from 'feathers-swagger'
 
 const app: Application = express(feathers())
 
@@ -47,9 +47,9 @@ app.configure(
         securitySchemes: {
           BearerAuth: {
             type: 'http',
-            scheme: 'bearer',
-          },
-        },
+            scheme: 'bearer'
+          }
+        }
       },
       security: [{ BearerAuth: [] }],
       schemes: ['http'] // Optionally set the protocol schema used (sometimes required when host on https)

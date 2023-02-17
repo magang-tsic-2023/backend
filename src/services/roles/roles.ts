@@ -11,11 +11,15 @@ import {
   rolesExternalResolver,
   rolesDataResolver,
   rolesPatchResolver,
-  rolesQueryResolver
+  rolesQueryResolver,
+  rolesDataSchema,
+  rolesQuerySchema,
+  rolesSchema
 } from './roles.schema'
 
 import type { Application } from '../../declarations'
 import { RolesService, getOptions } from './roles.class'
+import { createSwaggerServiceOptions } from 'feathers-swagger'
 
 export * from './roles.class'
 export * from './roles.schema'
@@ -27,7 +31,14 @@ export const roles = (app: Application) => {
     // A list of all methods this service exposes externally
     methods: ['find', 'get', 'create', 'patch', 'remove'],
     // You can add additional custom events to be sent to clients here
-    events: []
+    events: [],
+    docs: createSwaggerServiceOptions({
+      schemas: { rolesDataSchema, rolesQuerySchema, rolesSchema },
+      docs: {
+        description: 'My custom service description',
+        securities: ['find', 'get', 'create', 'patch', 'remove']
+      }
+    })
   })
   // Initialize hooks
   app.service('roles').hooks({

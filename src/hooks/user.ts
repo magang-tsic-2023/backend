@@ -35,15 +35,13 @@ export const getUserIdentity = async (context: HookContext) => {
 export const getUserRole = async (context: HookContext) => {
   const roles = []
   const { user } = context.params
-  for(const index in user.roles){
+  for (const index in user.roles) {
     const role = await app.service('roles').find({
-      query:{
+      query: {
         id: user.roles[index]
       }
     })
     roles.push(role)
   }
-  return context.data.roles=roles
+  return (context.data.roles = roles)
 }
-
-

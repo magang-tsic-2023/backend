@@ -47,14 +47,6 @@ export type PermissionsClientService = Pick<
   (typeof permissionsServiceMethods)[number]
 >
 
-import type { Groups, GroupsData, GroupsQuery, GroupsService } from './services/groups/groups'
-export type { Groups, GroupsData, GroupsQuery }
-export const groupsServiceMethods = ['find', 'get', 'create', 'patch', 'remove'] as const
-export type GroupsClientService = Pick<
-  GroupsService<Params<GroupsQuery>>,
-  (typeof groupsServiceMethods)[number]
->
-
 import type { Profile, ProfileData, ProfileQuery, ProfileService } from './services/profile/profile'
 export type { Profile, ProfileData, ProfileQuery }
 export const profileServiceMethods = ['find', 'get', 'create', 'patch', 'remove'] as const
@@ -99,7 +91,6 @@ export interface ServiceTypes {
   'docs-types': DocsTypesClientService
   roles: RolesClientService
   permissions: PermissionsClientService
-  groups: GroupsClientService
   profile: ProfileClientService
   approvals: ApprovalsClientService
   documents: DocumentsClientService
@@ -135,9 +126,6 @@ export const createClient = <Configuration = any>(
   })
   client.use('profile', connection.service('profile'), {
     methods: profileServiceMethods
-  })
-  client.use('groups', connection.service('groups'), {
-    methods: groupsServiceMethods
   })
   client.use('permissions', connection.service('permissions'), {
     methods: permissionsServiceMethods

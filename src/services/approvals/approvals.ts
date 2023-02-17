@@ -16,9 +16,14 @@ import {
 
 import type { Application } from '../../declarations'
 import { ApprovalsService, getOptions } from './approvals.class'
-import { getApprovalsbyLevel } from './approvals.hooks'
-import { approvalsDataSchema, approvalsQuerySchema, approvalsSchema } from './approvals.schema'
+import {
+  approvalsDataSchema,
+  approvalsQuerySchema,
+  approvalsPatchSchema,
+  approvalsSchema
+} from './approvals.schema'
 import { createSwaggerServiceOptions } from 'feathers-swagger'
+import { getApprovalsbyLevel } from './approvals.hooks'
 
 export * from './approvals.class'
 export * from './approvals.schema'
@@ -32,10 +37,12 @@ export const approvals = (app: Application) => {
     // You can add additional custom events to be sent to clients here
     events: [],
     docs: createSwaggerServiceOptions({
-      schemas: { approvalsDataSchema, approvalsQuerySchema, approvalsSchema },
-      docs: { description: 'My custom service description',
-      securities: ['find', 'get', 'update', 'patch', 'remove'],
-    }
+      schemas: { approvalsDataSchema, approvalsPatchSchema, approvalsQuerySchema, approvalsSchema },
+      docs: {
+        idType: 'string',
+        description: 'My custom service description',
+        securities: ['find', 'get', 'patch']
+      }
     })
   })
   // Initialize hooks
@@ -50,20 +57,19 @@ export const approvals = (app: Application) => {
     before: {
       all: [
         schemaHooks.validateQuery(approvalsQueryValidator),
-        schemaHooks.resolveQuery(approvalsQueryResolver),
+        schemaHooks.resolveQuery(approvalsQueryResolver)
         //getUserIdentity
       ],
       find: [],
-      get: [
-        getApprovalsbyLevel
-      ],
+      get: [],
       create: [
         schemaHooks.validateData(approvalsDataValidator),
         schemaHooks.resolveData(approvalsDataResolver)
       ],
       patch: [
+        getApprovalsbyLevel,
         schemaHooks.validateData(approvalsPatchValidator),
-        schemaHooks.resolveData(approvalsPatchResolver),
+        schemaHooks.resolveData(approvalsPatchResolver)
       ],
       remove: []
     },

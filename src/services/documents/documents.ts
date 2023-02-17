@@ -11,12 +11,13 @@ import {
   documentsExternalResolver,
   documentsDataResolver,
   documentsPatchResolver,
-  documentsQueryResolver
+  documentsQueryResolver,
+  Documents
 } from './documents.schema'
 
 import type { Application } from '../../declarations'
 import { DocumentsService, getOptions } from './documents.class'
-import { getApprovalList, insertApprovalList } from './documents.hooks'
+import { insertApprovalList } from './documents.hooks'
 import { createSwaggerServiceOptions } from 'feathers-swagger'
 import { documentsDataSchema, documentsQuerySchema, documentsSchema } from './documents.schema'
 
@@ -33,9 +34,11 @@ export const documents = (app: Application) => {
     events: [],
     docs: createSwaggerServiceOptions({
       schemas: { documentsDataSchema, documentsQuerySchema, documentsSchema },
-      docs: { description: 'My custom service description',
-      securities: ['find', 'get', 'create', 'patch', 'remove'],
-    }
+      docs: {
+        description: 'My custom service description',
+        idType: 'string',
+        securities: ['find', 'get', 'create', 'patch', 'remove']
+      }
     })
   })
   // Initialize hooks
@@ -50,19 +53,16 @@ export const documents = (app: Application) => {
     before: {
       all: [
         schemaHooks.validateQuery(documentsQueryValidator),
-        schemaHooks.resolveQuery(documentsQueryResolver),
+        schemaHooks.resolveQuery(documentsQueryResolver)
       ],
-      find: [schemaHooks.validateData(documentsDataValidator),
-        schemaHooks.resolveData(documentsDataResolver),
-        //getApprovalList,
-      ],
-      get: [
+      find: [
         schemaHooks.validateData(documentsDataValidator),
         schemaHooks.resolveData(documentsDataResolver)
       ],
+      get: [schemaHooks.validateData(documentsDataValidator), schemaHooks.resolveData(documentsDataResolver)],
       create: [
         schemaHooks.validateData(documentsDataValidator),
-        schemaHooks.resolveData(documentsDataResolver),
+        schemaHooks.resolveData(documentsDataResolver)
       ],
       patch: [
         schemaHooks.validateData(documentsPatchValidator),
@@ -72,7 +72,7 @@ export const documents = (app: Application) => {
     },
     after: {
       all: [],
-      create:[insertApprovalList]
+      create: [insertApprovalList]
     },
     error: {
       all: []

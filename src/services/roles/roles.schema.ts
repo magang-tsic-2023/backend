@@ -9,8 +9,8 @@ import { dataValidator, queryValidator } from '../../validators'
 // Main data model schema
 export const rolesSchema = Type.Object(
   {
-    id: Type.String(),
-    role_name: Type.String()
+    id: Type.Integer(),
+    name: Type.String()
   },
   { $id: 'Roles', additionalProperties: false }
 )
@@ -20,7 +20,7 @@ export const rolesResolver = resolve<Roles, HookContext>({})
 export const rolesExternalResolver = resolve<Roles, HookContext>({})
 
 // Schema for creating new entries
-export const rolesDataSchema = Type.Pick(rolesSchema, ['role_name'], {
+export const rolesDataSchema = Type.Pick(rolesSchema, ['name'], {
   $id: 'RolesData'
 })
 export type RolesData = Static<typeof rolesDataSchema>
@@ -36,7 +36,7 @@ export const rolesPatchValidator = getDataValidator(rolesPatchSchema, dataValida
 export const rolesPatchResolver = resolve<Roles, HookContext>({})
 
 // Schema for allowed query properties
-export const rolesQueryProperties = Type.Pick(rolesSchema, ['id', 'role_name'])
+export const rolesQueryProperties = Type.Pick(rolesSchema, ['id', 'name'])
 export const rolesQuerySchema = Type.Intersect(
   [
     querySyntax(rolesQueryProperties),

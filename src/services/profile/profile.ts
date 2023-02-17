@@ -11,11 +11,15 @@ import {
   profileExternalResolver,
   profileDataResolver,
   profilePatchResolver,
-  profileQueryResolver
+  profileQueryResolver,
+  profileDataSchema,
+  profileQuerySchema,
+  profileSchema
 } from './profile.schema'
 
 import type { Application } from '../../declarations'
 import { ProfileService, getOptions } from './profile.class'
+import { createSwaggerServiceOptions } from 'feathers-swagger'
 
 export * from './profile.class'
 export * from './profile.schema'
@@ -25,9 +29,17 @@ export const profile = (app: Application) => {
   // Register our service on the Feathers application
   app.use('profile', new ProfileService(getOptions(app)), {
     // A list of all methods this service exposes externally
-    methods: ['find', 'get', 'create', 'patch', 'remove'],
+    methods: ['find', 'get', 'patch', 'remove'],
     // You can add additional custom events to be sent to clients here
-    events: []
+    events: [],
+    docs: createSwaggerServiceOptions({
+      schemas: { profileDataSchema, profileQuerySchema, profileSchema },
+      docs: {
+        description: 'My custom service description',
+        idType: 'string',
+        securities: ['find', 'get', 'create', 'patch', 'remove']
+      }
+    })
   })
   // Initialize hooks
   app.service('profile').hooks({
@@ -42,10 +54,7 @@ export const profile = (app: Application) => {
       all: [schemaHooks.validateQuery(profileQueryValidator), schemaHooks.resolveQuery(profileQueryResolver)],
       find: [],
       get: [],
-      create: [
-        schemaHooks.validateData(profileDataValidator),
-        schemaHooks.resolveData(profileDataResolver),
-      ],
+      create: [schemaHooks.validateData(profileDataValidator), schemaHooks.resolveData(profileDataResolver)],
       patch: [schemaHooks.validateData(profilePatchValidator), schemaHooks.resolveData(profilePatchResolver)],
       remove: []
     },

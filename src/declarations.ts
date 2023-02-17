@@ -27,7 +27,7 @@ export type HookContext<S = any> = FeathersHookContext<Application, S>
 // Add the user as an optional property to all params
 declare module '@feathersjs/feathers' {
   interface ServiceOptions {
-    docs?: ServiceSwaggerOptions;
+    docs?: ServiceSwaggerOptions
   }
   interface Params {
     user?: User

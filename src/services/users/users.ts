@@ -18,6 +18,7 @@ import type { Application } from '../../declarations'
 import { UserService, getOptions } from './users.class'
 import { userDataSchema, userQuerySchema, userSchema } from './users.schema'
 import { createSwaggerServiceOptions } from 'feathers-swagger'
+import { createUserProfile } from './users.hooks'
 
 export * from './users.class'
 export * from './users.schema'
@@ -32,9 +33,11 @@ export const user = (app: Application) => {
     events: [],
     docs: createSwaggerServiceOptions({
       schemas: { userDataSchema, userQuerySchema, userSchema },
-      docs: { description: 'My custom service description',
-      securities: ['find', 'get', 'create', 'patch', 'remove'],
-    }
+      docs: {
+        description: 'My custom service description',
+        idType: 'string',
+        securities: ['find', 'get', 'create', 'patch', 'remove']
+      }
     })
   })
   // Initialize hooks
@@ -52,18 +55,13 @@ export const user = (app: Application) => {
       all: [schemaHooks.validateQuery(userQueryValidator), schemaHooks.resolveQuery(userQueryResolver)],
       find: [],
       get: [],
-      create: [
-        schemaHooks.validateData(userDataValidator),
-        schemaHooks.resolveData(userDataResolver),
-      ],
-      patch: [
-        schemaHooks.validateData(userPatchValidator),
-        schemaHooks.resolveData(userPatchResolver),
-      ],
+      create: [schemaHooks.validateData(userDataValidator), schemaHooks.resolveData(userDataResolver)],
+      patch: [schemaHooks.validateData(userPatchValidator), schemaHooks.resolveData(userPatchResolver)],
       remove: []
     },
     after: {
-      all: []
+      all: [],
+      create: [createUserProfile]
     },
     error: {
       all: []

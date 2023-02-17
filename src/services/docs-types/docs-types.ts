@@ -11,11 +11,15 @@ import {
   docsTypesExternalResolver,
   docsTypesDataResolver,
   docsTypesPatchResolver,
-  docsTypesQueryResolver
+  docsTypesQueryResolver,
+  docsTypesDataSchema,
+  docsTypesQuerySchema,
+  docsTypesSchema
 } from './docs-types.schema'
 
 import type { Application } from '../../declarations'
 import { DocsTypesService, getOptions } from './docs-types.class'
+import { createSwaggerServiceOptions } from 'feathers-swagger'
 
 export * from './docs-types.class'
 export * from './docs-types.schema'
@@ -27,7 +31,14 @@ export const docsTypes = (app: Application) => {
     // A list of all methods this service exposes externally
     methods: ['find', 'get', 'create', 'patch', 'remove'],
     // You can add additional custom events to be sent to clients here
-    events: []
+    events: [],
+    docs: createSwaggerServiceOptions({
+      schemas: { docsTypesDataSchema, docsTypesQuerySchema, docsTypesSchema },
+      docs: {
+        description: 'My custom service description',
+        securities: ['find', 'get', 'patch']
+      }
+    })
   })
   // Initialize hooks
   app.service('docs-types').hooks({

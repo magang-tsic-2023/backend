@@ -2,4 +2,9 @@
 import { app } from '../app'
 import type { HookContext } from '../declarations'
 
-export const docChannel = async (context: HookContext) => {}
+export const docChannel = async (context: HookContext) => {
+  console.log(context)
+  app.channel(context.params.id).send({
+    name: context.params.name
+  })
+}
